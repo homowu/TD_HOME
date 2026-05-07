@@ -1,0 +1,7 @@
+[2026-05-06 17:33:42] [INFO] Found 2 STEP file(s) to process...
+=================================================
+[2026-05-06 17:33:42] [INFO] Processing file: C:\Users\bangmin.wu\Desktop\TEST_CONVERT2\inputfile\M02142A70000.stp
+[2026-05-06 17:35:08] [INFO] File summary: status=OK, total=86.167 s, cpu=8.10%, memory=4.80% (peak_ws=1550.32 MB)
+=================================================
+[2026-05-06 17:35:08] [INFO] Processing file: C:\Users\bangmin.wu\Desktop\TEST_CONVERT2\inputfile\small_test.step
+[2026-05-06 17:35:08] [INFO] File summary: status=OK, total=0.008 s, cpu=0.00%, memory=4.80% (peak_ws=1550.32 MB)
