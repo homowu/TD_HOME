@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>示例网站</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>欢迎来到示例网站</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于</a></li>
+                <li><a href="#contact">联系</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h2>首页内容</h2>
+            <p>这是一个简单的HTML示例页面。</p>
+            <button id="btnClick">点击我</button>
+            <p id="counter">点击次数: 0</p>
+        </section>
+
+        <section id="about">
+            <h2>关于我们</h2>
+            <p>我们是一个专注于Web开发的团队。</p>
+        </section>
+
+        <section id="contact">
+            <h2>联系我们</h2>
+            <form id="contactForm">
+                <input type="text" id="name" placeholder="您的姓名" required>
+                <input type="email" id="email" placeholder="您的邮箱" required>
+                <textarea id="message" placeholder="留言内容" required></textarea>
+                <button type="submit">发送</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 示例网站. 保留所有权利.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
