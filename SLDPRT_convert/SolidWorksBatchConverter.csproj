@@ -1,0 +1,90 @@
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{E5E6B0A9-6C5D-4F4E-A9B1-4B8E9D7C8F5A}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SolidWorksBatchConverter</RootNamespace>
+    <AssemblyName>SolidWorksBatchConverter</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <StartUpObject>SolidWorksBatchConverter.Program</StartUpObject>
+    <!-- SolidWorks 官方互操作 DLL：默认安装路径（亦可复制到 lib 并设置 SOLIDWORKS_INTEROP_DIR） -->
+    <SolidWorksInteropDir Condition="'$(SOLIDWORKS_INTEROP_DIR)' != ''">$(SOLIDWORKS_INTEROP_DIR)</SolidWorksInteropDir>
+    <SolidWorksInteropDir Condition="'$(SolidWorksInteropDir)' == '' AND Exists('C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\SolidWorks.Interop.sldworks.dll')">C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist</SolidWorksInteropDir>
+    <SolidWorksInteropDir Condition="'$(SolidWorksInteropDir)' == '' AND Exists('C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\CLR4\SolidWorks.Interop.sldworks.dll')">C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist\CLR4</SolidWorksInteropDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Target Name="EnsureSolidWorksInterop" BeforeTargets="ResolveAssemblyReferences">
+    <Error Condition="'$(SolidWorksInteropDir)' == ''" Text="未找到 SolidWorks.Interop.sldworks.dll。请安装 SOLIDWORKS，或设置环境变量/MSBuild 属性 SOLIDWORKS_INTEROP_DIR 指向 api\redist（含 SolidWorks.Interop.*.dll）目录。" />
+  </Target>
+  <ItemGroup>
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>$(SolidWorksInteropDir)\SolidWorks.Interop.sldworks.dll</HintPath>
+      <Private>true</Private>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>$(SolidWorksInteropDir)\SolidWorks.Interop.swconst.dll</HintPath>
+      <Private>true</Private>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="AssimpNet">
+      <HintPath>packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <PropertyGroup>
+    <ForceCopyNativeAssimp>true</ForceCopyNativeAssimp>
+  </PropertyGroup>
+  <Import Project="packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="MainForm.cs" />
+    <Compile Include="SolidWorksBatchConverter.cs" />
+    <Compile Include="StlToFbxConverter.cs" />
+    <Compile Include="AssimpNativeBootstrap.cs" />
+    <Compile Include="ConversionResult.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Target Name="CopyAssimpNativeX64" AfterTargets="AfterBuild">
+    <PropertyGroup>
+      <_AssimpNative>$(MSBuildProjectDirectory)\packages\AssimpNet.4.1.0\runtimes\win-x64\native\assimp.dll</_AssimpNative>
+    </PropertyGroup>
+    <MakeDir Directories="$(OutputPath)runtimes\win-x64\native" Condition="Exists('$(_AssimpNative)')" />
+    <Copy SourceFiles="$(_AssimpNative)" DestinationFolder="$(OutputPath)runtimes\win-x64\native\" SkipUnchangedFiles="true" Condition="Exists('$(_AssimpNative)')" />
+    <Copy SourceFiles="$(_AssimpNative)" DestinationFolder="$(OutputPath)\" SkipUnchangedFiles="true" Condition="Exists('$(_AssimpNative)')" />
+    <Warning Condition="!Exists('$(_AssimpNative)')" Text="未找到 packages\AssimpNet.4.1.0\runtimes\win-x64\native\assimp.dll，STL→FBX 将无法加载 Assimp。" />
+  </Target>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
